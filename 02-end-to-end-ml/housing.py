@@ -224,4 +224,18 @@ rmse = np.sqrt(-mse)
 print(rmse)
 print(grid_search.best_params_)
 
+#2)
+param_distribs = {
+            'kernel':['linear','rbf'],
+            'C': stats.reciprocal(20,300000),
+            'gamma': stats.expon(scale=1.0),
+        }
+svm_reg = SVR()
+rnd_search = RandomizedSearchCV(svm_reg,param_distributions=param_distribs,n_iter=50,cv=5,scoring='neg_mean_squared_error',
+                                verbose=2,random_state=42)
+rnd_search.fit(housing_prepared,housing_labels)
+mse = rnd_search.best_score_
+rmse = np.sqrt(-mse)
+print('rmse random search:',rmse)
+print(rnd_search.best_params_)
 
