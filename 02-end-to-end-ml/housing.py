@@ -17,7 +17,8 @@ from sklearn.metrics import mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import  cross_val_score
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
+from sklearn.svm import  SVR
 from scipy import stats
 download_url = "https://raw.githubusercontent.com/ageron/handson-ml2/master/"
 housing_path = os.path.join("datasets","housing")
@@ -209,3 +210,18 @@ confidence = 0.95
 squared_errors = (final_predictions - y_test) ** 2
 
 print(np.sqrt(stats.t.interval(confidence,len(squared_errors) - 1,loc=squared_errors.mean(),scale=stats.sem(squared_errors))))
+
+#--------------------------- EXERCISES -------------------------#
+#1)
+param_grid = [{'kernel':['linear'],'C':[10.,20.,30.,100.,1000.,3000.,10000.,30000.,]},
+              {'kernel':['rbf'],'C':[1.,2.,3.,10.,30.,100.,300.,1000.,],
+               'gamma':[0.01,0.03,0.1,0.3,1.,3.]},]
+svm_reg = SVR()
+grid_search = GridSearchCV(svm_reg,param_grid,cv=5,scoring='neg_mean_squared_error',verbose=2)
+grid_search.fit(housing_prepared,housing_labels)
+mse = grid_search.best_score_
+rmse = np.sqrt(-mse)
+print(rmse)
+print(grid_search.best_params_)
+
+
